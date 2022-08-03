@@ -1,0 +1,67 @@
+version: "3"
+services:
+    #PHP Service
+    agenda-app:
+        build:
+            context: .
+            dockerfile: docker/php/Dockerfile
+        container_name: agenda-app
+        restart: unless-stopped
+        tty: true
+        working_dir: /var/www
+        volumes:
+            - ./:/var/www
+            - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - app-network
+    #Nginx Service
+    agenda-webserver:
+        image: nginx:alpine
+        container_name: agenda-webserver
+        restart: unless-stopped
+        tty: true
+        ports:
+            - 80:80
+        volumes:
+            - ./:/var/www
+            - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - app-network
+    #PostgresSql Service
+    db:
+        image: postgres:13
+        container_name: db
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "5333:5432"
+        environment:
+            POSTGRES_USER: 'agenda'
+            POSTGRES_PASSWORD: 'agenda'
+            POSTGRES_DB: 'agenda'
+        volumes:
+            - ./dbdata:/var/lib/pgsql/
+        networks:
+            - app-network
+    #PgAdmin Service
+    agenda-pgadmin:
+        image: dpage/pgadmin4
+        container_name: agenda-pgadmin
+        restart: unless-stopped
+        tty: true
+        environment:
+            PGADMIN_DEFAULT_EMAIL: 'agenda@agenda.com'
+            PGADMIN_DEFAULT_PASSWORD: 'agenda'
+        ports:
+            - "26543:80"
+        depends_on:
+            - db
+        networks:
+            - app-network
+networks:
+    app-network:
+        driver: bridge
+
+volumes:
+    dbdata:
+        driver: local
