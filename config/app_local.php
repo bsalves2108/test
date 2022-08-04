@@ -7,7 +7,7 @@
  */
 
 use Cake\Database\Connection;
-use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Mysql;
 
 return [
     /*
@@ -41,7 +41,7 @@ return [
     'Datasources' => [
         'default' => [
             'className' => Connection::class,
-            'driver' => Postgres::class,
+            'driver' => Mysql::class,
             'persistent' => true,
             'host' => env('DATABASE_HOST'),
             'port' => env('DATABASE_PORT'),

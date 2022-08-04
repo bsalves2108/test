@@ -27,35 +27,21 @@ services:
             - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
         networks:
             - app-network
-    #PostgresSql Service
+    #MySql Service
     db:
-        image: postgres:13
+        image: mysql
         container_name: db
         restart: unless-stopped
         tty: true
         ports:
-            - "5333:5432"
+            - "3306:3306"
         environment:
-            POSTGRES_USER: 'agenda'
-            POSTGRES_PASSWORD: 'agenda'
-            POSTGRES_DB: 'agenda'
+            MYSQL_ROOT_PASSWORD: 'agenda'
+            MYSQL_DATABASE: 'agenda'
+            MYSQL_USER: 'agenda'
+            MYSQL_PASSWORD: 'agenda'
         volumes:
             - ./dbdata:/var/lib/pgsql/
-        networks:
-            - app-network
-    #PgAdmin Service
-    agenda-pgadmin:
-        image: dpage/pgadmin4
-        container_name: agenda-pgadmin
-        restart: unless-stopped
-        tty: true
-        environment:
-            PGADMIN_DEFAULT_EMAIL: 'agenda@agenda.com'
-            PGADMIN_DEFAULT_PASSWORD: 'agenda'
-        ports:
-            - "26543:80"
-        depends_on:
-            - db
         networks:
             - app-network
 networks:
